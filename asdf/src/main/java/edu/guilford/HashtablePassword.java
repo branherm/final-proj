@@ -1,5 +1,9 @@
 package edu.guilford;
 
+/**
+ * A class that implements a hash table for storing account passwords.
+ * Supports linear probing for collision resolution and automatic rehashing.
+ */
 public class HashtablePassword implements hashTableMap {
     private final int useProbe;
     private Entry[] entries;
@@ -7,6 +11,9 @@ public class HashtablePassword implements hashTableMap {
     private int size, used;
     private final Entry NIL = new Entry(null, null);
 
+    /**
+     * Represents an entry in the hash table (key-value pair).
+     */
     private static class Entry {
         Object key, value;
         Entry(Object k, Object v) {
@@ -15,20 +22,41 @@ public class HashtablePassword implements hashTableMap {
         }
     }
 
+    /**
+     * Constructs a new hash table with the specified parameters.
+     * @param capacity the initial capacity of the hash table
+     * @param loadFactor the load factor at which rehashing should occur
+     * @param useProbe the probing strategy to use (0 for linear probing)
+     */
     public HashtablePassword(int capacity, float loadFactor, int useProbe) {
         entries = new Entry[capacity];
         this.loadFactor = loadFactor;
         this.useProbe = useProbe;
     }
 
+    /**
+     * Computes the hash value for a given key.
+     * @param key the key to hash
+     * @return the computed hash value
+     */
     public int hash(Object key) {
         return (key.hashCode() & 0x7FFFFFFF) % entries.length;
     }
 
+    /**
+     * Computes the next probe location using linear probing.
+     * @param h the initial hash value
+     * @param i the probe number
+     * @return the next probe location
+     */
     private int nextProbe(int h, int i) {
         return (h + i) % entries.length;
     }
 
+    /**
+     * Rehashes the table when the load factor is exceeded.
+     * Doubles the table size and reinserts all entries.
+     */
     private void rehash() {
         Entry[] oldEntries = entries;
         entries = new Entry[2 * entries.length + 1];

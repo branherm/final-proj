@@ -11,22 +11,37 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * The main JavaFX application class for the password manager GUI.
+ * This class provides a graphical interface for managing passwords including:
+ * - Generating secure passwords
+ * - Encrypting passwords
+ * - Storing account credentials
+ * - Retrieving stored passwords
+ * - Deleting account information
+ */
 public class PasswordManagerFX extends Application {
-
+    
     private HashtablePassword data = new HashtablePassword(15, 0.5F, 0);
 
+    /**
+     * The main entry point for the JavaFX application.
+     * @param primaryStage the primary stage for the application
+     */
     @Override
     public void start(Stage primaryStage) {
-        // Show splash screen first
         showSplashScreen(primaryStage);
     }
 
+    /**
+     * Displays a splash screen with loading animation before showing the main UI.
+     * @param primaryStage the primary stage of the application
+     */
     private void showSplashScreen(Stage primaryStage) {
         Stage splashStage = new Stage();
         StackPane splashRoot = new StackPane();
         ProgressBar progressBar = new ProgressBar(0);
         
-        // Splash screen components
         Label title = new Label("PASSWORD MANAGER");
         title.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
         
@@ -59,39 +74,43 @@ public class PasswordManagerFX extends Application {
         }).start();
     }
 
+    /**
+     * Creates and displays the main application UI with all functional buttons.
+     * @param primaryStage the primary stage of the application
+     */
     private void showMainUI(Stage primaryStage) {
         primaryStage.setTitle("Password Manager");
 
-        // Create main layout
         VBox mainLayout = new VBox(20);
         mainLayout.setPadding(new Insets(20));
         mainLayout.setStyle("-fx-background-color: #f5f5f5;");
 
-        // Create buttons
         Button generateBtn = createStyledButton("GENERATE PASSWORD");
         Button encryptBtn = createStyledButton("ENCRYPT PASSWORD");
         Button storeBtn = createStyledButton("STORE PASSWORD");
         Button searchBtn = createStyledButton("SEARCH PASSWORD");
         Button deleteBtn = createStyledButton("DELETE PASSWORD");
 
-        // Add button actions
         generateBtn.setOnAction(e -> showGeneratePasswordDialog());
         encryptBtn.setOnAction(e -> showEncryptPasswordDialog());
         storeBtn.setOnAction(e -> showStorePasswordDialog());
         searchBtn.setOnAction(e -> showSearchPasswordDialog());
         deleteBtn.setOnAction(e -> showDeletePasswordDialog());
 
-        // Add buttons to layout
         mainLayout.getChildren().addAll(
             generateBtn, encryptBtn, storeBtn, searchBtn, deleteBtn
         );
 
-        // Set scene and show stage
         Scene scene = new Scene(mainLayout, 400, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
+    /**
+     * Creates a consistently styled button for the application UI.
+     * @param text the text to display on the button
+     * @return the styled Button object
+     */
     private Button createStyledButton(String text) {
         Button button = new Button(text);
         button.setMaxWidth(Double.MAX_VALUE);
@@ -101,6 +120,10 @@ public class PasswordManagerFX extends Application {
         return button;
     }
 
+    /**
+     * Shows a dialog for generating a new random password with specified length.
+     * The generated password includes uppercase, lowercase, numbers, and special characters.
+     */
     private void showGeneratePasswordDialog() {
         TextInputDialog dialog = new TextInputDialog("12");
         dialog.setTitle("Generate Password");
@@ -132,6 +155,10 @@ public class PasswordManagerFX extends Application {
         });
     }
 
+    /**
+     * Shows a dialog for encrypting a password using SHA-1 hashing with salt.
+     * Displays the resulting encrypted hash to the user.
+     */
     private void showEncryptPasswordDialog() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Encrypt Password");
@@ -162,16 +189,18 @@ public class PasswordManagerFX extends Application {
         });
     }
 
+    /**
+     * Shows a dialog for storing new account credentials in the password manager.
+     * Collects both username and password and stores them in the hash table.
+     */
     private void showStorePasswordDialog() {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Store Password");
         dialog.setHeaderText("Enter account credentials");
 
-        // Set the button types
         ButtonType storeButtonType = new ButtonType("Store", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(storeButtonType, ButtonType.CANCEL);
 
-        // Create the username and password fields
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -188,11 +217,8 @@ public class PasswordManagerFX extends Application {
         grid.add(password, 1, 1);
 
         dialog.getDialogPane().setContent(grid);
-
-        // Request focus on the username field by default
         Platform.runLater(username::requestFocus);
 
-        // Convert the result to a username-password-pair when the store button is clicked
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == storeButtonType) {
                 return new Pair<>(username.getText(), password.getText());
@@ -210,6 +236,10 @@ public class PasswordManagerFX extends Application {
         });
     }
 
+    /**
+     * Shows a dialog for retrieving a stored password by account name.
+     * Displays the password if found, or a not found message otherwise.
+     */
     private void showSearchPasswordDialog() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Search Password");
@@ -234,6 +264,10 @@ public class PasswordManagerFX extends Application {
         });
     }
 
+    /**
+     * Shows a dialog for deleting stored account credentials by account name.
+     * Provides feedback on whether the deletion was successful.
+     */
     private void showDeletePasswordDialog() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Delete Password");
@@ -250,6 +284,12 @@ public class PasswordManagerFX extends Application {
         });
     }
 
+    /**
+     * Displays a standard alert dialog with the specified parameters.
+     * @param title the title of the alert window
+     * @param message the message content to display
+     * @param type the type of alert (INFORMATION, WARNING, ERROR, etc.)
+     */
     private void showAlert(String title, String message, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -258,6 +298,10 @@ public class PasswordManagerFX extends Application {
         alert.showAndWait();
     }
 
+    /**
+     * The main method that launches the application.
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }
